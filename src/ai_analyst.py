@@ -210,17 +210,22 @@ class AIBusinessAnalyst:
 
     def simulate_what_if_scenario(
         self,
-        base_demand: float,
-        base_price: float,
-        price_change_pct: float,
-        discount_pct: float,
-        promo_duration_days: int,
+        base_demand: float = 12500.0,
+        base_price: float = 24.50,
+        price_change_pct: float = 0.0,
+        discount_pct: float = 0.0,
+        promo_duration_days: int = 7,
         ad_spend_usd: float = 0.0,
         competitor_price_change_pct: float = 0.0,
         unit_cogs_ratio: float = 0.55,
-        elasticity: float = -1.42
+        elasticity: float = -1.42,
+        **kwargs
     ) -> dict:
         """Simulates demand, revenue, profit, and 30-day timeline curves under interactive what-if parameters."""
+        ad_spend_usd = kwargs.get("ad_spend_usd", ad_spend_usd)
+        competitor_price_change_pct = kwargs.get("competitor_price_change_pct", competitor_price_change_pct)
+        unit_cogs_ratio = kwargs.get("unit_cogs_ratio", unit_cogs_ratio)
+        elasticity = kwargs.get("elasticity", elasticity)
         new_price = base_price * (1.0 + price_change_pct / 100.0) * (1.0 - discount_pct / 100.0)
         
         # Net effective price change
