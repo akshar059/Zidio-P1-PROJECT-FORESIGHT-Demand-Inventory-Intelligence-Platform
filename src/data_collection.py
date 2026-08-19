@@ -50,7 +50,11 @@ class DataCollector:
         missing = []
         for filename in EXPECTED_FILES:
             filepath = os.path.join(self.raw_data_dir, filename)
-            if not os.path.exists(filepath):
+            base_no_ext = filename.replace(".csv", "")
+            part1 = os.path.join(self.raw_data_dir, f"{base_no_ext}_part1.csv.gz")
+            gz_single = os.path.join(self.raw_data_dir, f"{filename}.gz")
+            
+            if not (os.path.exists(filepath) or os.path.exists(part1) or os.path.exists(gz_single)):
                 missing.append(filename)
         
         if missing:
@@ -65,7 +69,24 @@ class DataCollector:
         filepath = os.path.join(self.raw_data_dir, filename)
         logger.info(f"Ingesting raw dataset: {filename}...")
         
-        df = pd.read_csv(filepath)
+        if os.path.exists(filepath):
+            df = pd.read_csv(filepath)
+        else:
+            base_no_ext = filename.replace(".csv", "")
+            part1 = os.path.join(self.raw_data_dir, f"{base_no_ext}_part1.csv.gz")
+            part2 = os.path.join(self.raw_data_dir, f"{base_no_ext}_part2.csv.gz")
+            gz_single = os.path.join(self.raw_data_dir, f"{filename}.gz")
+            
+            if os.path.exists(part1) and os.path.exists(part2):
+                logger.info(f"  Reading split compressed parts: {part1} and {part2}...")
+                df1 = pd.read_csv(part1, compression="gzip")
+                df2 = pd.read_csv(part2, compression="gzip")
+                df = pd.concat([df1, df2], ignore_index=True)
+            elif os.path.exists(gz_single):
+                df = pd.read_csv(gz_single, compression="gzip")
+            else:
+                raise FileNotFoundError(f"Cannot find {filename} or compressed parts in {self.raw_data_dir}")
+                
         initial_mem_mb = df.memory_usage(deep=True).sum() / (1024 * 1024)
         
         if optimize_mem:
