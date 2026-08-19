@@ -1,0 +1,25 @@
+# Large raw CSV datasets (> 100 MB GitHub limit)
+DATASET/*.csv
+data/processed/*.csv
+data/processed/feature_matrix.parquet
+data/processed/cleaned_sales.parquet
+data/processed/cleaned_discounts_history.parquet
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python Cache & Build Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+catboost_info/
+*.log
+
+# OS & IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
