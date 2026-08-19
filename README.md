@@ -6,14 +6,14 @@
 [![Status](https://img.shields.io/badge/Status-100%25%20Complete-brightgreen.svg)]()
 
 > **Zidio Development Data Science Engagement Brief — Project FORESIGHT**  
-> **Client:** NorthBay Living (Direct-to-Consumer Home & Lifestyle Brand)  
+> **Dataset Source:** [Retail Sales Forecasting Data](https://www.kaggle.com/datasets/svizor/retail-sales-forecasting-data) (Enterprise Multi-Store Omnichannel Retail Network)  
 > **Owner:** Data Science & Analytics Engineering Team  
 
 ---
 
 ## 📖 Executive Summary & Problem Context
 
-NorthBay Living is a direct-to-consumer (D2C) home & lifestyle brand operating across e-commerce and physical retail store formats. Previously relying on manual spreadsheets and gut-feel procurement, NorthBay faced severe operational inefficiencies in two directions:
+This enterprise demand and inventory intelligence platform is built upon the [Retail Sales Forecasting Data](https://www.kaggle.com/datasets/svizor/retail-sales-forecasting-data), an enterprise omnichannel retail dataset comprising store sales transactions, product catalog taxonomies, promotional markdowns, price history, and e-commerce orders. Previously relying on manual spreadsheets and gut-feel procurement, retail networks faced severe operational inefficiencies in two directions:
 1. **Stockouts on Best-Sellers**: High-demand products ran out of stock, causing lost sales and customer churn.
 2. **Overstock on Slow Movers**: Excess inventory accumulated in warehouses, locking up capital and forcing margin-eroding markdowns.
 

@@ -1,7 +1,7 @@
 # Data-Quality & EDA Insight Memo
 
 **Engagement:** Project FORESIGHT — Demand & Inventory Intelligence Platform  
-**Client:** NorthBay Living (D2C Home & Lifestyle Brand) / Omnichannel Retail Network  
+**Dataset Source:** [Retail Sales Forecasting Data](https://www.kaggle.com/datasets/svizor/retail-sales-forecasting-data) (Enterprise Multi-Store Omnichannel Retail Network)  
 **Author:** Lead Data Scientist & Analytics Engineering Team  
 **Date:** August 19, 2026  
 **Document Status:** Approved for Client Checkpoint M2  

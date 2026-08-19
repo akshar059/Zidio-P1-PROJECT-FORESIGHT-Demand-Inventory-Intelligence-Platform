@@ -1,7 +1,7 @@
 # Executive Readout & C-Suite Decision Deck
 
 **Project FORESIGHT: Enterprise Demand & Inventory Intelligence Platform**  
-**Client:** Head of Operations & Finance Leadership, NorthBay Living  
+**Client / Dataset Source:** [Retail Sales Forecasting Data](https://www.kaggle.com/datasets/svizor/retail-sales-forecasting-data) (Enterprise Omnichannel Retail Network)  
 **Author:** Data Science & Analytics Engineering Team  
 **Date:** August 19, 2026  
 **Classification:** Executive / Confidential  
@@ -10,7 +10,7 @@
 
 ## 1. Executive Summary & Financial Impact
 
-Project FORESIGHT transitions NorthBay Living from spreadsheet-based gut-feel procurement to a data-driven, machine-learning-powered demand forecasting and inventory risk intelligence platform.
+Project FORESIGHT transitions omnichannel retail networks from spreadsheet-based gut-feel procurement to a data-driven, machine-learning-powered demand forecasting and inventory risk intelligence platform using the [Retail Sales Forecasting Data](https://www.kaggle.com/datasets/svizor/retail-sales-forecasting-data).
 
 ### 💰 Key Headline Financial Impacts:
 - **$14.8M Revenue at Risk Protected**: Identifies 2,036 critical stockout SKUs before inventory depletion occurs.
