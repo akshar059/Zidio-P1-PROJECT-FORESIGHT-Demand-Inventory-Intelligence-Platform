@@ -83,6 +83,68 @@ $$\text{Overstock Score} = \text{clip}\left((\text{Days of Supply} - 7) \times 7
 
 ---
 
+## 🖥️ Interactive Planning Dashboard UI Screenshots & Feature Explanations
+
+Project FORESIGHT features a 7-page enterprise Streamlit analytics intelligence dashboard (`src/dashboard/app.py`). Below are actual UI screenshots and their detailed analytical explanations:
+
+---
+
+### 1. 🚀 Page 1: Executive Command Center Dashboard
+![Executive Command Center](assets/screenshots/dashboard_home.png)
+
+- **UI Components**: Embedded Holographic Eye Brand Logo, 6 C-Suite Metric Cards, Holt-Winters 28-Day Forecast Horizon Curve, 3D RFM Store Matrix, Polar Health Radar, Store Ranking Leaderboard.
+- **Analytical Explanation**: Provides an instant 360-degree executive view of gross sales revenue ($46.6M), vulnerable stockout exposure ($14.8M), trapped overstock capital ($41.6M), and store format productivity across Hypermarket, Supermarket, Express, and Mega Store formats.
+
+---
+
+### 2. 📊 Page 2: Sales Analytics & Elasticity Dashboard
+![Sales Analytics Dashboard](assets/screenshots/dashboard_sales_analytics.png)
+
+- **UI Components**: Pareto 80/20 Cumulative Revenue Curve, Channel Breakdown (POS Retail Stores vs E-Commerce), Log-Log Price Elasticity Scatter Plot ($\varepsilon = -1.42$).
+- **Analytical Explanation**: Analyzes SKU revenue concentration (identifying top 20% revenue-generating items), channel dominance, and price elasticity coefficient ($\varepsilon = -1.42$) to guide targeted promotional discounting strategies without eroding gross margin.
+
+---
+
+### 3. 🔮 Page 3: AI Demand Prediction Engine & What-If Scenario Simulator
+![Demand Forecast & Simulator](assets/screenshots/dashboard_forecast_simulator.png)
+
+- **UI Components**: Master Multi-Model Evaluation Leaderboard, 16-Test Fundamental Statistical Hypothesis Suite Table, 6 Interactive Scenario Sliders, 2D Profit Sensitivity Matrix Heatmap.
+- **Analytical Explanation**: Demonstrates the LightGBM model's superior 24.15% WAPE forecasting accuracy (-14.35% error reduction over baseline) and provides an interactive simulator for C-suite leaders to model what-if scenarios (e.g. ad spend lift, competitor price cuts, seasonal spikes) with real-time net profit recalculations.
+
+---
+
+### 4. 📦 Page 4: Inventory Management & Safety Stock Calculator
+![Inventory Dashboard](assets/screenshots/dashboard_inventory_safety_stock.png)
+
+- **UI Components**: Dynamic Safety Stock ($SS = Z \times \sigma_d \times \sqrt{L}$) and Reorder Point ($ROP$) Calculator, Economic Order Quantity ($EOQ$) Matrix, Stockout Risk Heatmap.
+- **Analytical Explanation**: Replaces static rule-of-thumb buffer rules with mathematically optimal safety stock and reorder point triggers tailored to each SKU's lead time and demand variance, eliminating stockouts while minimizing holding costs.
+
+---
+
+### 5. ⚠️ Page 5: Risk & Anomaly Decision Center
+![Risk Decision Center](assets/screenshots/dashboard_risk_decision_center.png)
+
+- **UI Components**: 4-Quadrant Stockout vs Overstock Decisioning Grid (sized by dollar value at stake), Isolation Forest Anomaly Scatter Plot, Markov Inventory State Transition Matrix.
+- **Analytical Explanation**: Automatically classifies 31,706 SKU-store pairs into 4 operational decision quadrants (*Reorder Now 🚨, Markdown / Clear 🏷️, Watch / Volatile ⚠️, Healthy ✅*) with explicit dollar values at stake, enabling procurement teams to prioritize high-impact purchase orders.
+
+---
+
+### 6. 🛍️ Page 6: Product Details & Dual-SKU Radar Benchmark
+![Product Details Radar](assets/screenshots/dashboard_product_radar.png)
+
+- **UI Components**: Side-by-Side Dual-SKU Polar Radar Comparison, Product Health Score Matrix, K-Means 5-Cluster Segment Scatter Plot.
+- **Analytical Explanation**: Allows category managers to benchmark two products head-to-head across health score, price tier, unit velocity, and growth rate, while reviewing K-Means portfolio clusters (*High-Velocity Staples, Seasonal Volatile, Slow-Moving Overstock*).
+
+---
+
+### 7. 👔 Page 7: Executive Summary Decision Center
+![Executive Summary Decision Center](assets/screenshots/dashboard_executive_summary.png)
+
+- **UI Components**: C-Suite Financial Loss Waterfall & EBIT Bridge, DuPont Return on Net Assets (RONA) Tree, LP Knapsack Capital Optimizer, Strategic Impact vs Implementation Effort Matrix.
+- **Analytical Explanation**: Serves as the ultimate C-suite briefing deck, decomposing revenue loss into stockout impact, holding cost sunk, and promotional markdowns, while providing an LP-optimized capital reallocation plan to maximize enterprise Return on Net Assets (RONA = 29.8%).
+
+---
+
 ## 🏗️ Solution Architecture & Repository Layout
 
 ```
