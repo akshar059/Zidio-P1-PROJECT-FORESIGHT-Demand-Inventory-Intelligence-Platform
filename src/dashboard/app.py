@@ -1025,7 +1025,10 @@ elif page == "📊 2. Sales Analytics — Deep Sales Intelligence":
     if "Weekly" in gran:
         plot_df = plot_df.set_index("date").resample("W").agg({"sum_total": "sum", "quantity": "sum"}).reset_index()
     elif "Monthly" in gran:
-        plot_df = plot_df.set_index("date").resample("M").agg({"sum_total": "sum", "quantity": "sum"}).reset_index()
+        try:
+            plot_df = plot_df.set_index("date").resample("ME").agg({"sum_total": "sum", "quantity": "sum"}).reset_index()
+        except ValueError:
+            plot_df = plot_df.set_index("date").resample("M").agg({"sum_total": "sum", "quantity": "sum"}).reset_index()
 
     y_col = "sum_total" if "Revenue" in metric_mode else "quantity"
     fig_line = px.line(plot_df, x="date", y=y_col, title=f"Historical Demand Velocity ({gran})", color_discrete_sequence=["#00f2fe"])
