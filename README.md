@@ -2,10 +2,11 @@
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![LightGBM](https://img.shields.io/badge/ML-LightGBM-green.svg)](https://lightgbm.readthedocs.io/)
-[![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-red.svg)](https://streamlit.io/)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-Live%20Demo-ff4b4b.svg?logo=streamlit)](https://zidio-p1-project-foresight-demand-inventory-intelligence-platf.streamlit.app/)
 [![Status](https://img.shields.io/badge/Status-100%25%20Complete-brightgreen.svg)]()
 
 > **Zidio Development Data Science Engagement Brief — Project FORESIGHT**  
+> 🌐 **Live Streamlit Dashboard:** [https://zidio-p1-project-foresight-demand-inventory-intelligence-platf.streamlit.app/](https://zidio-p1-project-foresight-demand-inventory-intelligence-platf.streamlit.app/)  
 > **Dataset Source:** [Retail Sales Forecasting Data](https://www.kaggle.com/datasets/svizor/retail-sales-forecasting-data) (Enterprise Multi-Store Omnichannel Retail Network)  
 > **Owner:** Data Science & Analytics Engineering Team  
 
@@ -84,7 +85,10 @@ $$\text{Overstock Score} = \text{clip}\left((\text{Days of Supply} - 7) \times 7
 
 ## 🖥️ Interactive Planning Dashboard UI Screenshots & Feature Explanations
 
-Project FORESIGHT features a 7-page enterprise Streamlit analytics intelligence dashboard (`src/dashboard/app.py`). Below are actual UI screenshots and their detailed analytical explanations:
+Project FORESIGHT features a 7-page enterprise Streamlit analytics intelligence dashboard (`src/dashboard/app.py`).  
+👉 **Try the Live Application:** [https://zidio-p1-project-foresight-demand-inventory-intelligence-platf.streamlit.app/](https://zidio-p1-project-foresight-demand-inventory-intelligence-platf.streamlit.app/)
+
+Below are actual UI screenshots and their detailed analytical explanations:
 
 ---
 
@@ -189,8 +193,8 @@ project-1/
 ### 1. Environment Setup
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/project-foresight.git
-cd project-foresight
+git clone https://github.com/akshar059/Zidio-P1-PROJECT-FORESIGHT-Demand-Inventory-Intelligence-Platform.git
+cd Zidio-P1-PROJECT-FORESIGHT-Demand-Inventory-Intelligence-Platform
 
 # Create and activate virtual environment
 python -m venv .venv
@@ -206,6 +210,9 @@ python src/pipeline.py
 ```
 
 ### 3. Launch the Streamlit Intelligence Dashboard (7 Pages)
+🌐 **Live Deployed Dashboard:** [https://zidio-p1-project-foresight-demand-inventory-intelligence-platf.streamlit.app/](https://zidio-p1-project-foresight-demand-inventory-intelligence-platf.streamlit.app/)
+
+Or run locally:
 ```bash
 streamlit run app.py
 ```
