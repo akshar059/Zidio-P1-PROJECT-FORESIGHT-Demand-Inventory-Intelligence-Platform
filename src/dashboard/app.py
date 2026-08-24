@@ -866,7 +866,11 @@ if page == "🚀 1. Home Page — Foresight Command Center":
         fig_hw = go.Figure()
         fig_hw.add_trace(go.Scatter(x=daily_sales_df["date"].values[-90:], y=hist_series, mode="lines", name="Historical Sales ($)", line=dict(color="#1f6feb", width=2)))
         fig_hw.add_trace(go.Scatter(x=hw_dates, y=hw_forecasts, mode="lines+markers", name="Holt-Winters 28D Smoothed Trend", line=dict(color="#00f2fe", width=2.5, dash="dash")))
-        fig_hw.update_layout(template="plotly_dark", title="Holt-Winters Triple Exponential Smoothing Forecast", height=340, legend=dict(orientation="h", y=1.12))
+        fig_hw.update_layout(
+            template="plotly_dark", title="Holt-Winters Triple Exponential Smoothing Forecast",
+            height=340, legend=dict(orientation="h", y=1.12),
+            xaxis_title="Date Timeline", yaxis_title="Daily Sales Revenue ($)"
+        )
         st.plotly_chart(fig_hw, use_container_width=True)
         st.info("💡 **Intellectual Insight**: Holt-Winters algorithm decomposes daily sales into baseline level ($l_t$), additive trend ($b_t$), and weekly 7-day seasonality ($s_t$) to project stable 28-day demand without weekend noise distortion.")
 
@@ -881,9 +885,22 @@ if page == "🚀 1. Home Page — Foresight Command Center":
             rfm_df, x="Frequency (Orders)", y="Recency (Days)", z="Monetary ($)",
             color="Segment", size="Monetary ($)", text="Store",
             title="Store Network RFM 3D Segmentation Matrix",
+            labels={
+                "Frequency (Orders)": "Order Frequency (Transactions)",
+                "Recency (Days)": "Recency (Days Since Last Order)",
+                "Monetary ($)": "Monetary Value ($ Sales)",
+                "Segment": "RFM Segment"
+            },
             color_discrete_sequence=["#00f2fe", "#58a6ff", "#3fb950"]
         )
-        fig_rfm.update_layout(template="plotly_dark", height=340, margin=dict(l=0, r=0, b=0, t=30))
+        fig_rfm.update_layout(
+            template="plotly_dark", height=340, margin=dict(l=0, r=0, b=0, t=30),
+            scene=dict(
+                xaxis_title="Order Frequency (Transactions)",
+                yaxis_title="Recency (Days Since Last Order)",
+                zaxis_title="Monetary Value ($ Sales)"
+            )
+        )
         st.plotly_chart(fig_rfm, use_container_width=True)
         st.info("💡 **Intellectual Insight**: 3D RFM Matrix identifies Store 104 & 101 as primary revenue Champions ($45.7M combined), while Store 103 functions as a rapid-turnover urban fulfillment node.")
 
@@ -906,7 +923,7 @@ if page == "🚀 1. Home Page — Foresight Command Center":
         ))
         fig_radar.update_layout(
             template="plotly_dark",
-            polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+            polar=dict(radialaxis=dict(visible=True, range=[0, 100], title=dict(text="Health Score (0-100)", font=dict(size=10)))),
             height=320, margin=dict(l=30, r=30, t=20, b=20)
         )
         st.plotly_chart(fig_radar, use_container_width=True)
@@ -1031,8 +1048,12 @@ elif page == "📊 2. Sales Analytics — Deep Sales Intelligence":
             plot_df = plot_df.set_index("date").resample("M").agg({"sum_total": "sum", "quantity": "sum"}).reset_index()
 
     y_col = "sum_total" if "Revenue" in metric_mode else "quantity"
-    fig_line = px.line(plot_df, x="date", y=y_col, title=f"Historical Demand Velocity ({gran})", color_discrete_sequence=["#00f2fe"])
-    fig_line.update_layout(template="plotly_dark", height=370)
+    y_axis_name = "Sales Revenue ($)" if "Revenue" in metric_mode else "Quantity Sold (Units)"
+    fig_line = px.line(
+        plot_df, x="date", y=y_col, title=f"Historical Demand Velocity ({gran})", color_discrete_sequence=["#00f2fe"],
+        labels={"date": "Date Timeline", y_col: y_axis_name}
+    )
+    fig_line.update_layout(template="plotly_dark", height=370, xaxis_title="Date Timeline", yaxis_title=y_axis_name)
     st.plotly_chart(fig_line, use_container_width=True)
 
     # NEW REAL-WORLD INDUSTRY ALGORITHM 2: Monte Carlo 1,000-Path VaR & Cross-Selling Lift Matrix
@@ -1050,7 +1071,10 @@ elif page == "📊 2. Sales Analytics — Deep Sales Intelligence":
         fig_mc.add_trace(go.Scatter(x=sim_days, y=p95, mode="lines", name="95th Percentile (Upside)", line=dict(color="rgba(0,242,254,0.3)")))
         fig_mc.add_trace(go.Scatter(x=sim_days, y=p50, mode="lines", name="50th Percentile (Median)", line=dict(color="#00f2fe", width=2.5)))
         fig_mc.add_trace(go.Scatter(x=sim_days, y=p5, mode="lines", name="5th Percentile (95% VaR Floor)", fill="tonexty", fillcolor="rgba(0,242,254,0.12)", line=dict(color="rgba(248,81,73,0.8)", width=2)))
-        fig_mc.update_layout(template="plotly_dark", title="Monte Carlo 1,000-Path Revenue Volatility & 95% VaR Envelope", height=330)
+        fig_mc.update_layout(
+            template="plotly_dark", title="Monte Carlo 1,000-Path Revenue Volatility & 95% VaR Envelope", height=330,
+            xaxis_title="Simulation Forecast Date Timeline", yaxis_title="Simulated Daily Revenue ($)"
+        )
         st.plotly_chart(fig_mc, use_container_width=True)
 
     with m_col2:
@@ -1065,9 +1089,13 @@ elif page == "📊 2. Sales Analytics — Deep Sales Intelligence":
         ])
         fig_lift = px.imshow(
             lift_matrix, x=depts_cat, y=depts_cat, color_continuous_scale="Viridis", text_auto=".2f",
-            title="Department Cross-Category Basket Co-Occurrence Synergy Lift Matrix"
+            title="Department Cross-Category Basket Co-Occurrence Synergy Lift Matrix",
+            labels=dict(x="Purchased Department (Antecedent)", y="Associated Department (Consequent)", color="Lift Synergy Ratio")
         )
-        fig_lift.update_layout(template="plotly_dark", height=330)
+        fig_lift.update_layout(
+            template="plotly_dark", height=330,
+            xaxis_title="Purchased Department (Antecedent)", yaxis_title="Associated Department (Consequent)"
+        )
         st.plotly_chart(fig_lift, use_container_width=True)
 
     st.divider()
@@ -1079,12 +1107,18 @@ elif page == "📊 2. Sales Analytics — Deep Sales Intelligence":
     
     d1, d2 = st.columns(2)
     with d1:
-        fig_trend = px.line(decomp_df, x="date", y=["sum_total", "7D_Trend"], title="7-Day Rolling Trend vs Raw Revenue", color_discrete_sequence=["#2b5c8f", "#00f2fe"])
-        fig_trend.update_layout(template="plotly_dark", height=320)
+        fig_trend = px.line(
+            decomp_df, x="date", y=["sum_total", "7D_Trend"], title="7-Day Rolling Trend vs Raw Revenue", color_discrete_sequence=["#2b5c8f", "#00f2fe"],
+            labels={"date": "Date Timeline", "value": "Daily Sales ($)", "variable": "Metric Series"}
+        )
+        fig_trend.update_layout(template="plotly_dark", height=320, xaxis_title="Date Timeline", yaxis_title="Daily Revenue ($)")
         st.plotly_chart(fig_trend, use_container_width=True)
     with d2:
-        fig_dow = px.bar(dow_season, x="DayOfWeek", y="sum_total", title="Day-of-Week Demand Seasonality ($)", color="sum_total", color_continuous_scale="Blues")
-        fig_dow.update_layout(template="plotly_dark", height=320, showlegend=False)
+        fig_dow = px.bar(
+            dow_season, x="DayOfWeek", y="sum_total", title="Day-of-Week Demand Seasonality ($)", color="sum_total", color_continuous_scale="Blues",
+            labels={"DayOfWeek": "Day of the Week", "sum_total": "Average Daily Revenue ($)"}
+        )
+        fig_dow.update_layout(template="plotly_dark", height=320, showlegend=False, xaxis_title="Day of the Week", yaxis_title="Average Daily Revenue ($)")
         st.plotly_chart(fig_dow, use_container_width=True)
 
     st.divider()
@@ -1094,8 +1128,11 @@ elif page == "📊 2. Sales Analytics — Deep Sales Intelligence":
     m_sales["year_month_str"] = m_sales["year_month"].astype(str)
     m_sales["mom_growth"] = m_sales["sum_total"].pct_change() * 100.0
     
-    fig_mom = px.bar(m_sales.dropna(), x="year_month_str", y="mom_growth", title="Month-over-Month Sales Growth (%)", color="mom_growth", color_continuous_scale="Tealgrn")
-    fig_mom.update_layout(template="plotly_dark", height=330, showlegend=False)
+    fig_mom = px.bar(
+        m_sales.dropna(), x="year_month_str", y="mom_growth", title="Month-over-Month Sales Growth (%)", color="mom_growth", color_continuous_scale="Tealgrn",
+        labels={"year_month_str": "Year-Month Period", "mom_growth": "MoM Growth Rate (%)"}
+    )
+    fig_mom.update_layout(template="plotly_dark", height=330, showlegend=False, xaxis_title="Year-Month Period", yaxis_title="MoM Growth Rate (%)")
     st.plotly_chart(fig_mom, use_container_width=True)
 
     col_p, col_c = st.columns(2)
@@ -1110,6 +1147,7 @@ elif page == "📊 2. Sales Analytics — Deep Sales Intelligence":
         fig_pareto.add_trace(go.Scatter(x=top_30["item_id"], y=top_30["cum_pct"], name="Cumulative %", yaxis="y2", line=dict(color="#f85149", width=3)))
         fig_pareto.update_layout(
             template="plotly_dark", title=f"Top 30 SKUs ({pareto_pct:.1f}% SKUs generate 80% Revenue)",
+            xaxis=dict(title="Top Product SKUs (Ranked by Revenue)"),
             yaxis=dict(title="Revenue ($)"), yaxis2=dict(title="Cumulative %", overlaying="y", side="right", range=[0, 105]),
             height=380
         )
@@ -1132,9 +1170,9 @@ elif page == "📊 2. Sales Analytics — Deep Sales Intelligence":
     fig_scat = px.scatter(
         growth_df.head(100), x="total_revenue", y="growth_pct", color="matrix_category",
         hover_data=["item_id"], title="Product Growth Rate (%) vs Total Revenue ($)",
-        labels={"total_revenue": "Total Revenue ($)", "growth_pct": "Growth Rate (%)"}
+        labels={"total_revenue": "Total Revenue ($)", "growth_pct": "Growth Rate (%)", "matrix_category": "Growth Category"}
     )
-    fig_scat.update_layout(template="plotly_dark", height=420)
+    fig_scat.update_layout(template="plotly_dark", height=420, xaxis_title="Total Product Revenue ($)", yaxis_title="Product Sales Growth Rate (%)")
     st.plotly_chart(fig_scat, use_container_width=True)
 
 
@@ -1196,7 +1234,10 @@ elif page == "🔮 3. Forecast — AI Demand Prediction Engine":
             increasing={"marker": {"color": "#00f2fe"}},
             totals={"marker": {"color": "#3fb950"}}
         ))
-        fig_shap.update_layout(template="plotly_dark", title="SHAP Value Waterfall Feature Impact Decomposition (SKU_001)", height=340)
+        fig_shap.update_layout(
+            template="plotly_dark", title="SHAP Value Waterfall Feature Impact Decomposition (SKU_001)", height=340,
+            xaxis_title="Demand Attribution Drivers & Features", yaxis_title="SHAP Marginal Contribution (Units)"
+        )
         st.plotly_chart(fig_shap, use_container_width=True)
 
     with sh_col2:
@@ -1210,7 +1251,10 @@ elif page == "🔮 3. Forecast — AI Demand Prediction Engine":
         fig_violin = go.Figure()
         for col in v_df.columns:
             fig_violin.add_trace(go.Violin(y=v_df[col], name=col, box_visible=True, points="all"))
-        fig_violin.update_layout(template="plotly_dark", title="Inter-Model Prediction Residual Error Distribution (Violin Plot)", height=340)
+        fig_violin.update_layout(
+            template="plotly_dark", title="Inter-Model Prediction Residual Error Distribution (Violin Plot)", height=340,
+            xaxis_title="Forecasting Models", yaxis_title="Residual Prediction Error (y - y_hat)"
+        )
         st.plotly_chart(fig_violin, use_container_width=True)
 
     st.divider()
@@ -1239,7 +1283,10 @@ elif page == "🔮 3. Forecast — AI Demand Prediction Engine":
         fig_fc.add_trace(go.Scatter(x=sub["date"], y=sub["upper_bound"], mode="lines", name=f"Upper Bound ({conf_width})", line=dict(color="rgba(0,242,254,0.2)")))
         fig_fc.add_trace(go.Scatter(x=sub["date"], y=sub["lower_bound"], mode="lines", name=f"Lower Bound ({conf_width})", fill="tonexty", fillcolor="rgba(0,242,254,0.1)", line=dict(color="rgba(0,242,254,0.2)")))
         
-        fig_fc.update_layout(template="plotly_dark", title=f"28-Day Demand Forecast Horizon (Store {sel_store} | {sel_item})", height=420)
+        fig_fc.update_layout(
+            template="plotly_dark", title=f"28-Day Demand Forecast Horizon (Store {sel_store} | {sel_item})", height=420,
+            xaxis_title="Forecast Horizon Date Timeline", yaxis_title="Demand Quantity (Units)"
+        )
         st.plotly_chart(fig_fc, use_container_width=True)
 
     st.markdown("### ⚡ Multi-Model Forecast Overlay Comparison")
@@ -1250,7 +1297,10 @@ elif page == "🔮 3. Forecast — AI Demand Prediction Engine":
         fig_multi.add_trace(go.Scatter(x=sub["date"], y=sub["catboost_quantity"], name="CatBoost (WAPE 25.80%)", line=dict(color="#3fb950", width=2, dash="dash")))
         fig_multi.add_trace(go.Scatter(x=sub["date"], y=sub["xgboost_quantity"], name="XGBoost (WAPE 26.42%)", line=dict(color="#a371f7", width=2, dash="dot")))
         fig_multi.add_trace(go.Scatter(x=sub["date"], y=sub["seasonal_naive_baseline"], name="Seasonal-Naive Baseline (WAPE 38.50%)", line=dict(color="#d29922", width=2, dash="dashdot")))
-        fig_multi.update_layout(template="plotly_dark", title="Multi-Model Forecast Horizon Overlay", height=380)
+        fig_multi.update_layout(
+            template="plotly_dark", title="Multi-Model Forecast Horizon Overlay", height=380,
+            xaxis_title="Forecast Date Timeline", yaxis_title="Predicted Demand (Units)"
+        )
         st.plotly_chart(fig_multi, use_container_width=True)
 
     st.markdown("### 📊 Model Residual Error Distribution & Feature Importance")
@@ -1258,16 +1308,24 @@ elif page == "🔮 3. Forecast — AI Demand Prediction Engine":
     with fi1:
         np.random.seed(42)
         errors = np.random.normal(0, 1.2, 500)
-        fig_err = px.histogram(errors, nbins=30, title="Forecast Residual Error Distribution (y - y_hat)", color_discrete_sequence=["#00f2fe"])
-        fig_err.update_layout(template="plotly_dark", height=320, showlegend=False)
+        fig_err = px.histogram(
+            errors, nbins=30, title="Forecast Residual Error Distribution (y - y_hat)",
+            color_discrete_sequence=["#00f2fe"],
+            labels={"value": "Residual Error (y - y_hat)", "count": "Frequency Count"}
+        )
+        fig_err.update_layout(template="plotly_dark", height=320, showlegend=False, xaxis_title="Residual Error (y - y_hat)", yaxis_title="Frequency Count")
         st.plotly_chart(fig_err, use_container_width=True)
     with fi2:
         feats_df = pd.DataFrame({
             "Feature": ["Lag_7", "Lag_14", "Rolling_Mean_7", "DayOfWeek", "Base_Price", "Is_Weekend", "Discount_Pct"],
             "Importance Score": [0.38, 0.24, 0.18, 0.09, 0.05, 0.04, 0.02]
         }).sort_values("Importance Score", ascending=True)
-        fig_feat = px.bar(feats_df, y="Feature", x="Importance Score", orientation="h", title="LightGBM Feature Importance Drivers", color="Importance Score", color_continuous_scale="Blues")
-        fig_feat.update_layout(template="plotly_dark", height=320, showlegend=False)
+        fig_feat = px.bar(
+            feats_df, y="Feature", x="Importance Score", orientation="h",
+            title="LightGBM Feature Importance Drivers", color="Importance Score", color_continuous_scale="Blues",
+            labels={"Feature": "Model Predictive Feature", "Importance Score": "Relative Importance Weight"}
+        )
+        fig_feat.update_layout(template="plotly_dark", height=320, showlegend=False, xaxis_title="Relative Importance Weight Score", yaxis_title="Model Predictive Feature")
         st.plotly_chart(fig_feat, use_container_width=True)
 
     st.divider()
@@ -1337,7 +1395,7 @@ elif page == "🔮 3. Forecast — AI Demand Prediction Engine":
         )
         fig_curve.update_layout(
             title="30-Day Daily Demand Forecast Trajectory (Baseline vs Scenario)",
-            xaxis_title="Date Timeline", yaxis_title="Daily Unit Volume",
+            xaxis_title="Date Timeline", yaxis_title="Daily Demand Volume (Units)",
             template="plotly_dark", height=360, legend=dict(orientation="h", y=1.12)
         )
         st.plotly_chart(fig_curve, use_container_width=True)
@@ -1352,7 +1410,10 @@ elif page == "🔮 3. Forecast — AI Demand Prediction Engine":
             title="Net Profit Sensitivity Heatmap ($)",
             color_continuous_scale="Viridis", text_auto=".2s"
         )
-        fig_heat.update_layout(template="plotly_dark", height=360)
+        fig_heat.update_layout(
+            template="plotly_dark", height=360,
+            xaxis_title="Promotional Discount Depth (%)", yaxis_title="Base Price Change (%)"
+        )
         st.plotly_chart(fig_heat, use_container_width=True)
 
     # AI Pricing Strategy & Revenue Recommendation Diagnosis
@@ -1383,8 +1444,12 @@ elif page == "📦 4. Inventory Dashboard — Smart Inventory Intelligence":
             {"ABC-XYZ": "B-Y (Med Rev, Moderate)", "Count": 7, "Revenue ($)": 3200000.0},
             {"ABC-XYZ": "C-Z (Low Rev, Volatile)", "Count": 8, "Revenue ($)": 1350000.0}
         ])
-        fig_abc = px.bar(abc_data, x="ABC-XYZ", y="Revenue ($)", color="Count", text_auto=".2s", title="9-Cell ABC-XYZ Inventory Stratification Matrix", color_continuous_scale="Tealgrn")
-        fig_abc.update_layout(template="plotly_dark", height=330)
+        fig_abc = px.bar(
+            abc_data, x="ABC-XYZ", y="Revenue ($)", color="Count", text_auto=".2s",
+            title="9-Cell ABC-XYZ Inventory Stratification Matrix", color_continuous_scale="Tealgrn",
+            labels={"ABC-XYZ": "ABC-XYZ Classification Matrix Segment", "Revenue ($)": "Total Segment Revenue ($)", "Count": "SKU Count"}
+        )
+        fig_abc.update_layout(template="plotly_dark", height=330, xaxis_title="ABC-XYZ Classification Matrix Segment", yaxis_title="Total Segment Revenue ($)")
         st.plotly_chart(fig_abc, use_container_width=True)
 
     with abc_col2:
@@ -1399,7 +1464,10 @@ elif page == "📦 4. Inventory Dashboard — Smart Inventory Intelligence":
         fig_nv.add_trace(go.Scatter(x=stock_q, y=overage_cost, name="Overage Loss Co(Q-D)", line=dict(color="#d29922", dash="dash")))
         fig_nv.add_trace(go.Scatter(x=stock_q, y=total_nv_cost, name="Total Expected Newsvendor Loss", line=dict(color="#00f2fe", width=3)))
         fig_nv.add_vline(x=opt_nv, line_dash="dash", line_color="#3fb950", annotation_text=f"Newsvendor Optimal Q = {opt_nv:.0f}")
-        fig_nv.update_layout(template="plotly_dark", title="Newsvendor Single-Period Underage vs Overage Loss Model", height=330)
+        fig_nv.update_layout(
+            template="plotly_dark", title="Newsvendor Single-Period Underage vs Overage Loss Model", height=330,
+            xaxis_title="Target Stock Order Quantity Q (Units)", yaxis_title="Expected Loss Cost ($)"
+        )
         st.plotly_chart(fig_nv, use_container_width=True)
 
     st.divider()
@@ -1438,10 +1506,14 @@ elif page == "📦 4. Inventory Dashboard — Smart Inventory Intelligence":
     st.markdown("### 📈 Inventory Days of Supply Distribution & Safety Stock Buffer")
     i_col1, i_col2 = st.columns(2)
     with i_col1:
-        fig_dos_hist = px.histogram(risk_calc, x="days_of_supply", nbins=25, title="Days of Supply Distribution across Catalog", color_discrete_sequence=["#58a6ff"])
+        fig_dos_hist = px.histogram(
+            risk_calc, x="days_of_supply", nbins=25, title="Days of Supply Distribution across Catalog",
+            color_discrete_sequence=["#58a6ff"],
+            labels={"days_of_supply": "Days of Supply (Days)", "count": "SKU Count"}
+        )
         fig_dos_hist.add_vline(x=3.0, line_dash="dash", line_color="#f85149", annotation_text="Critical (3D)")
         fig_dos_hist.add_vline(x=14.0, line_dash="dash", line_color="#d29922", annotation_text="Overstock (14D)")
-        fig_dos_hist.update_layout(template="plotly_dark", height=340)
+        fig_dos_hist.update_layout(template="plotly_dark", height=340, xaxis_title="Days of Supply (Days)", yaxis_title="SKU Count")
         st.plotly_chart(fig_dos_hist, use_container_width=True)
 
     with i_col2:
@@ -1449,7 +1521,10 @@ elif page == "📦 4. Inventory Dashboard — Smart Inventory Intelligence":
         fig_ss_bar = go.Figure()
         fig_ss_bar.add_trace(go.Bar(x=top_skus["item_id"], y=top_skus["safety_stock"], name="Safety Stock (SS)", marker_color="#00f2fe"))
         fig_ss_bar.add_trace(go.Bar(x=top_skus["item_id"], y=top_skus["current_stock"], name="Current Stock On-Hand", marker_color="#1f6feb"))
-        fig_ss_bar.update_layout(template="plotly_dark", barmode="group", title="Safety Stock vs On-Hand Stock (Sample SKUs)", height=340)
+        fig_ss_bar.update_layout(
+            template="plotly_dark", barmode="group", title="Safety Stock vs On-Hand Stock (Sample SKUs)", height=340,
+            xaxis_title="Product SKU Identifier", yaxis_title="Inventory Units (Buffer vs Stock)"
+        )
         st.plotly_chart(fig_ss_bar, use_container_width=True)
 
     st.markdown("### 📈 Economic Order Quantity (EOQ) Total Cost Optimization Curve")
@@ -1465,7 +1540,10 @@ elif page == "📦 4. Inventory Dashboard — Smart Inventory Intelligence":
     fig_eoq.add_trace(go.Scatter(x=q_vals, y=total_curve, name="Total Inventory Cost TC(Q)", line=dict(color="#00f2fe", width=3)))
     fig_eoq.add_vline(x=opt_q, line_width=2, line_dash="dash", line_color="#f85149", annotation_text=f"Optimal EOQ = {opt_q:.0f} Units")
     
-    fig_eoq.update_layout(template="plotly_dark", title="EOQ Cost Minimization Model Curve", height=380)
+    fig_eoq.update_layout(
+        template="plotly_dark", title="EOQ Cost Minimization Model Curve", height=380,
+        xaxis_title="Order Quantity Q (Units per Batch)", yaxis_title="Annual Inventory Cost ($)"
+    )
     st.plotly_chart(fig_eoq, use_container_width=True)
 
     st.markdown("### 📋 Model-Based Replenishment Policy Table")
@@ -1508,8 +1586,13 @@ elif page == "⚠️ 5. Risk Dashboard — Risk & Anomaly Decision Center":
         is_outlier = (dos_vals < 2.0) | (dos_vals > 20.0) | (cv_vals > 1.2)
         iso_df = pd.DataFrame({"Days of Supply": dos_vals, "Demand Volatility (CV)": cv_vals, "Anomaly State": np.where(is_outlier, "Statistical Anomaly 🚨", "Normal Operation ✅")})
         
-        fig_iso = px.scatter(iso_df, x="Days of Supply", y="Demand Volatility (CV)", color="Anomaly State", color_discrete_map={"Statistical Anomaly 🚨": "#f85149", "Normal Operation ✅": "#00f2fe"}, title="Isolation Forest Anomaly Detection Scatter Plot")
-        fig_iso.update_layout(template="plotly_dark", height=330)
+        fig_iso = px.scatter(
+            iso_df, x="Days of Supply", y="Demand Volatility (CV)", color="Anomaly State",
+            color_discrete_map={"Statistical Anomaly 🚨": "#f85149", "Normal Operation ✅": "#00f2fe"},
+            title="Isolation Forest Anomaly Detection Scatter Plot",
+            labels={"Days of Supply": "Days of Supply (Days)", "Demand Volatility (CV)": "Demand Volatility (CV = Std/Mean)"}
+        )
+        fig_iso.update_layout(template="plotly_dark", height=330, xaxis_title="Days of Supply (Days)", yaxis_title="Demand Volatility (CV = Std/Mean)")
         st.plotly_chart(fig_iso, use_container_width=True)
 
     with iso_col2:
@@ -1519,8 +1602,15 @@ elif page == "⚠️ 5. Risk Dashboard — Risk & Anomaly Decision Center":
             [0.20, 0.65, 0.15],
             [0.45, 0.35, 0.20]
         ])
-        fig_markov = px.imshow(markov_mat, x=states, y=states, color_continuous_scale="Reds", text_auto=".2f", title="Markov Chain Inventory State Transition Probability Matrix")
-        fig_markov.update_layout(template="plotly_dark", height=330)
+        fig_markov = px.imshow(
+            markov_mat, x=states, y=states, color_continuous_scale="Reds", text_auto=".2f",
+            title="Markov Chain Inventory State Transition Probability Matrix",
+            labels=dict(x="Destination Inventory State (t+1)", y="Origin Inventory State (t)", color="Transition Probability")
+        )
+        fig_markov.update_layout(
+            template="plotly_dark", height=330,
+            xaxis_title="Destination Inventory State (t+1)", yaxis_title="Origin Inventory State (t)"
+        )
         st.plotly_chart(fig_markov, use_container_width=True)
 
     st.divider()
@@ -1557,12 +1647,12 @@ elif page == "⚠️ 5. Risk Dashboard — Risk & Anomaly Decision Center":
             "Watch / volatile ⚠️": "#a371f7",
             "Healthy ✅": "#3fb950"
         },
-        labels={"overstock_score": "Overstock Risk Score (0-100)", "stockout_score": "Stockout Risk Score (0-100)"},
+        labels={"overstock_score": "Overstock Risk Score (0-100)", "stockout_score": "Stockout Risk Score (0-100)", "quadrant": "Decision Quadrant"},
         title="4-Quadrant Inventory Decisioning Grid (Sized by Dollar Value at Stake)"
     )
     fig_grid.add_hline(y=50, line_dash="dash", line_color="#8b949e")
     fig_grid.add_vline(x=50, line_dash="dash", line_color="#8b949e")
-    fig_grid.update_layout(template="plotly_dark", height=460)
+    fig_grid.update_layout(template="plotly_dark", height=460, xaxis_title="Overstock Risk Score (0-100)", yaxis_title="Stockout Risk Score (0-100)")
     st.plotly_chart(fig_grid, use_container_width=True)
 
     r_left, r_right = st.columns(2)
@@ -1580,8 +1670,12 @@ elif page == "⚠️ 5. Risk Dashboard — Risk & Anomaly Decision Center":
         st.markdown("### 🏬 Financial Risk Exposure by Store Format")
         st_risk = risk_df.groupby("store_id")[["revenue_at_risk", "locked_capital"]].sum().reset_index()
         st_risk["store_id_str"] = "Store " + st_risk["store_id"].astype(str)
-        fig_st_bar = px.bar(st_risk, x="store_id_str", y=["revenue_at_risk", "locked_capital"], title="Store Financial Exposure ($)", barmode="group", color_discrete_sequence=["#f85149", "#d29922"])
-        fig_st_bar.update_layout(template="plotly_dark", height=340)
+        fig_st_bar = px.bar(
+            st_risk, x="store_id_str", y=["revenue_at_risk", "locked_capital"],
+            title="Store Financial Exposure ($)", barmode="group", color_discrete_sequence=["#f85149", "#d29922"],
+            labels={"store_id_str": "Retail Store Format", "value": "Financial Exposure Amount ($)", "variable": "Exposure Category"}
+        )
+        fig_st_bar.update_layout(template="plotly_dark", height=340, xaxis_title="Retail Store Format", yaxis_title="Financial Exposure Amount ($)")
         st.plotly_chart(fig_st_bar, use_container_width=True)
 
     st.divider()
@@ -1592,9 +1686,10 @@ elif page == "⚠️ 5. Risk Dashboard — Risk & Anomaly Decision Center":
     fig_risk_heat = px.density_heatmap(
         risk_heat_data, x="dept_name", y="store_id_str", z="stockout_score",
         title="Risk Intensity Score Matrix (Store ID vs Product Department)",
-        color_continuous_scale="Reds", labels={"dept_name": "Product Department", "store_id_str": "Store Format"}
+        color_continuous_scale="Reds",
+        labels={"dept_name": "Product Department Name", "store_id_str": "Store Format", "stockout_score": "Mean Stockout Risk Score"}
     )
-    fig_risk_heat.update_layout(template="plotly_dark", height=350)
+    fig_risk_heat.update_layout(template="plotly_dark", height=350, xaxis_title="Product Department Name", yaxis_title="Store Format")
     st.plotly_chart(fig_risk_heat, use_container_width=True)
 
     st.markdown("### 📈 28-Day Projected Stockout Risk Timeline & Pareto Risk Curve")
@@ -1604,16 +1699,24 @@ elif page == "⚠️ 5. Risk Dashboard — Risk & Anomaly Decision Center":
         np.random.seed(42)
         stockout_proj = np.random.poisson(12, 28) + np.linspace(5, 25, 28).astype(int)
         proj_df = pd.DataFrame({"Date": proj_dates, "Projected_Stockouts": stockout_proj})
-        fig_proj_line = px.line(proj_df, x="Date", y="Projected_Stockouts", title="28-Day Projected Critical Stockout Count Forecast", color_discrete_sequence=["#f85149"])
-        fig_proj_line.update_layout(template="plotly_dark", height=330)
+        fig_proj_line = px.line(
+            proj_df, x="Date", y="Projected_Stockouts",
+            title="28-Day Projected Critical Stockout Count Forecast", color_discrete_sequence=["#f85149"],
+            labels={"Date": "Projected Date Timeline", "Projected_Stockouts": "Projected Stockout SKUs Count"}
+        )
+        fig_proj_line.update_layout(template="plotly_dark", height=330, xaxis_title="Projected Date Timeline", yaxis_title="Projected Stockout SKUs Count")
         st.plotly_chart(fig_proj_line, use_container_width=True)
 
     with rk_t2:
         sorted_risk = risk_df.sort_values("revenue_at_risk", ascending=False).head(20).reset_index(drop=True)
         sorted_risk["cum_loss"] = sorted_risk["revenue_at_risk"].cumsum()
         sorted_risk["cum_loss_pct"] = (sorted_risk["cum_loss"] / max(sorted_risk["revenue_at_risk"].sum(), 1)) * 100.0
-        fig_risk_pareto = px.bar(sorted_risk, x="item_id", y="revenue_at_risk", title="Top 20 High-Risk SKUs Revenue Exposure ($)", color="revenue_at_risk", color_continuous_scale="Reds")
-        fig_risk_pareto.update_layout(template="plotly_dark", height=330, showlegend=False)
+        fig_risk_pareto = px.bar(
+            sorted_risk, x="item_id", y="revenue_at_risk",
+            title="Top 20 High-Risk SKUs Revenue Exposure ($)", color="revenue_at_risk", color_continuous_scale="Reds",
+            labels={"item_id": "High-Risk SKU Identifier", "revenue_at_risk": "Revenue at Risk ($)"}
+        )
+        fig_risk_pareto.update_layout(template="plotly_dark", height=330, showlegend=False, xaxis_title="High-Risk SKU Identifier", yaxis_title="Revenue at Risk ($)")
         st.plotly_chart(fig_risk_pareto, use_container_width=True)
 
     st.divider()
@@ -1652,7 +1755,10 @@ elif page == "⚠️ 5. Risk Dashboard — Risk & Anomaly Decision Center":
         increasing={"marker": {"color": "#00f2fe"}},
         totals={"marker": {"color": "#3fb950"}}
     ))
-    fig_water.update_layout(template="plotly_dark", title="Financial Impact Loss Waterfall ($ Millions)", height=380)
+    fig_water.update_layout(
+        template="plotly_dark", title="Financial Impact Loss Waterfall ($ Millions)", height=380,
+        xaxis_title="Financial Impact Breakdown Stages", yaxis_title="Capital Amount ($ Millions)"
+    )
     st.plotly_chart(fig_water, use_container_width=True)
 
     st.markdown("### 🚨 Actionable Reorder & Markdown Priority List")
@@ -1675,8 +1781,12 @@ elif page == "🛍️ 6. Product Details — Product Intelligence":
             "Cluster Segment": ["Champions 🏆", "Core Sellers 🏛️", "Niche High-Price 💎", "Emerging Growth 🚀", "Low-Demand Watch 📉"],
             "Silhouette Score": [0.78, 0.84, 0.69, 0.72, 0.65]
         }).sort_values("Silhouette Score", ascending=True)
-        fig_sil = px.bar(sil_df, y="Cluster Segment", x="Silhouette Score", orientation="h", title="K-Means Cluster Silhouette Width Score Validation", color="Silhouette Score", color_continuous_scale="Viridis")
-        fig_sil.update_layout(template="plotly_dark", height=330, showlegend=False)
+        fig_sil = px.bar(
+            sil_df, y="Cluster Segment", x="Silhouette Score", orientation="h",
+            title="K-Means Cluster Silhouette Width Score Validation", color="Silhouette Score", color_continuous_scale="Viridis",
+            labels={"Cluster Segment": "K-Means Cluster Segment", "Silhouette Score": "Silhouette Score Width (0.0 to 1.0)"}
+        )
+        fig_sil.update_layout(template="plotly_dark", height=330, showlegend=False, xaxis_title="Silhouette Score Width (0.0 to 1.0)", yaxis_title="K-Means Cluster Segment")
         st.plotly_chart(fig_sil, use_container_width=True)
 
     with pr_col2:
@@ -1686,7 +1796,10 @@ elif page == "🛍️ 6. Product Details — Product Intelligence":
         Margin = (P * (1 - D / 100.0) - 8.0) * (5000 / (P ** 1.42))
         
         fig_contour = go.Figure(data=go.Contour(z=Margin, x=p_grid, y=d_grid, colorscale="Blues"))
-        fig_contour.update_layout(template="plotly_dark", title="Price Point vs Discount Depth Net Margin Profitability Contour ($)", height=330)
+        fig_contour.update_layout(
+            template="plotly_dark", title="Price Point vs Discount Depth Net Margin Profitability Contour ($)", height=330,
+            xaxis_title="Base Unit Price ($)", yaxis_title="Promotional Discount Depth (%)"
+        )
         st.plotly_chart(fig_contour, use_container_width=True)
 
     st.divider()
@@ -1703,14 +1816,22 @@ elif page == "🛍️ 6. Product Details — Product Intelligence":
         prices = np.random.uniform(10, 60, 100)
         demand = 5000 / (prices ** 1.42) + np.random.normal(0, 15, 100)
         elast_scat = pd.DataFrame({"Price": prices, "Demand": demand.clip(5, 500)})
-        fig_elast_curve = px.scatter(elast_scat, x="Price", y="Demand", trendline="ols", title="Log-Log Price Elasticity Curve (ε = -1.42)", color_discrete_sequence=["#00f2fe"])
-        fig_elast_curve.update_layout(template="plotly_dark", height=350)
+        fig_elast_curve = px.scatter(
+            elast_scat, x="Price", y="Demand", trendline="ols",
+            title="Log-Log Price Elasticity Curve (ε = -1.42)", color_discrete_sequence=["#00f2fe"],
+            labels={"Price": "Unit Price ($)", "Demand": "Unit Sales Demand Volume"}
+        )
+        fig_elast_curve.update_layout(template="plotly_dark", height=350, xaxis_title="Unit Price ($)", yaxis_title="Unit Sales Demand Volume")
         st.plotly_chart(fig_elast_curve, use_container_width=True)
 
     with p_col2:
         cluster_scat_data = clustered_df.head(300) if len(clustered_df) > 300 else clustered_df
-        fig_cluster_scat = px.scatter(cluster_scat_data, x="avg_price", y="total_revenue", color="cluster_name", hover_data=["item_id"], title="K-Means Product Segment Clusters (5 Clusters)", labels={"avg_price": "Avg Price ($)", "total_revenue": "Total Revenue ($)"})
-        fig_cluster_scat.update_layout(template="plotly_dark", height=350)
+        fig_cluster_scat = px.scatter(
+            cluster_scat_data, x="avg_price", y="total_revenue", color="cluster_name", hover_data=["item_id"],
+            title="K-Means Product Segment Clusters (5 Clusters)",
+            labels={"avg_price": "Average Product Price ($)", "total_revenue": "Total Product Revenue ($)", "cluster_name": "Cluster Segment"}
+        )
+        fig_cluster_scat.update_layout(template="plotly_dark", height=350, xaxis_title="Average Product Price ($)", yaxis_title="Total Product Revenue ($)")
         st.plotly_chart(fig_cluster_scat, use_container_width=True)
 
     st.divider()
@@ -1735,7 +1856,10 @@ elif page == "🛍️ 6. Product Details — Product Intelligence":
         theta=['Health Score', 'Revenue Score', 'Price Tier', 'Growth Velocity'],
         fill='toself', name=f"Product B ({sku_b})", line=dict(color="#f85149")
     ))
-    fig_comp_radar.update_layout(template="plotly_dark", height=350)
+    fig_comp_radar.update_layout(
+        template="plotly_dark", height=350,
+        polar=dict(radialaxis=dict(visible=True, range=[0, 100], title=dict(text="Score (0-100)", font=dict(size=10))))
+    )
     st.plotly_chart(fig_comp_radar, use_container_width=True)
     
     comp_df = pd.DataFrame([
@@ -1805,7 +1929,10 @@ elif page == "👔 7. Executive Summary — Decision Center":
         increasing={"marker": {"color": "#00f2fe"}},
         totals={"marker": {"color": "#3fb950"}}
     ))
-    fig_waterfall.update_layout(template="plotly_dark", title="C-Suite Financial Loss Waterfall ($ Millions)", height=380)
+    fig_waterfall.update_layout(
+        template="plotly_dark", title="C-Suite Financial Loss Waterfall ($ Millions)", height=380,
+        xaxis_title="Financial EBIT Bridge Components", yaxis_title="Financial Impact ($ Millions)"
+    )
     st.plotly_chart(fig_waterfall, use_container_width=True)
 
     st.divider()
@@ -1824,7 +1951,10 @@ elif page == "👔 7. Executive Summary — Decision Center":
             increasing={"marker": {"color": "#00f2fe"}},
             totals={"marker": {"color": "#3fb950"}}
         ))
-        fig_dupont.update_layout(template="plotly_dark", title="DuPont Return on Net Assets (RONA) Tree Decomposition", height=340)
+        fig_dupont.update_layout(
+            template="plotly_dark", title="DuPont Return on Net Assets (RONA) Tree Decomposition", height=340,
+            xaxis_title="DuPont Framework Stages", yaxis_title="Percentage Return (%) / Multiple Factor"
+        )
         st.plotly_chart(fig_dupont, use_container_width=True)
 
     with dup_col2:
@@ -1833,8 +1963,13 @@ elif page == "👔 7. Executive Summary — Decision Center":
             "Current Capital ($M)": [8.5, 12.0, 6.5, 4.2, 10.4],
             "LP Optimized Allocation ($M)": [14.2, 11.5, 8.8, 5.1, 2.0]
         })
-        fig_lp = px.bar(lp_df, x="Department", y=["Current Capital ($M)", "LP Optimized Allocation ($M)"], barmode="group", title="Linear Programming Knapsack Capital Reallocation Optimization", color_discrete_sequence=["#58a6ff", "#00f2fe"])
-        fig_lp.update_layout(template="plotly_dark", height=340)
+        fig_lp = px.bar(
+            lp_df, x="Department", y=["Current Capital ($M)", "LP Optimized Allocation ($M)"],
+            barmode="group", title="Linear Programming Knapsack Capital Reallocation Optimization",
+            color_discrete_sequence=["#58a6ff", "#00f2fe"],
+            labels={"Department": "Product Department", "value": "Capital Allocation ($ Millions)", "variable": "Allocation Strategy"}
+        )
+        fig_lp.update_layout(template="plotly_dark", height=340, xaxis_title="Product Department", yaxis_title="Capital Allocation ($ Millions)")
         st.plotly_chart(fig_lp, use_container_width=True)
 
     st.divider()
@@ -1869,10 +2004,11 @@ elif page == "👔 7. Executive Summary — Decision Center":
     ])
     fig_impact_eff = px.scatter(
         matrix_bubble_data, x="Effort", y="Strategic Impact", size="Dollar Value ($)", color="Priority",
-        text="Directive", hover_data=["Dollar Value ($)"], title="Strategic Impact (0-100) vs Implementation Effort (0-100)"
+        text="Directive", hover_data=["Dollar Value ($)"], title="Strategic Impact (0-100) vs Implementation Effort (0-100)",
+        labels={"Effort": "Implementation Effort Score (0-100)", "Strategic Impact": "Strategic Financial Impact Score (0-100)", "Priority": "Strategic Priority"}
     )
     fig_impact_eff.update_traces(textposition='top center')
-    fig_impact_eff.update_layout(template="plotly_dark", height=420)
+    fig_impact_eff.update_layout(template="plotly_dark", height=420, xaxis_title="Implementation Effort Score (0-100)", yaxis_title="Strategic Financial Impact Score (0-100)")
     st.plotly_chart(fig_impact_eff, use_container_width=True)
 
     # 6. Action Priority Matrix & Operational Directives

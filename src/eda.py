@@ -308,6 +308,8 @@ class ExploratoryDataAnalysis:
         plt.figure(figsize=(8, 6))
         sns.heatmap(corr, annot=True, fmt=".3f", cmap="coolwarm", vmin=-1, vmax=1, cbar_kws={'label': 'Pearson Correlation'})
         plt.title("Multi-Variate Correlation Matrix (Quantity, Price, Revenue)", fontsize=14, fontweight="bold", pad=12)
+        plt.xlabel("Features / Variables", fontsize=11)
+        plt.ylabel("Features / Variables", fontsize=11)
         plt.tight_layout()
         
         corr_path = os.path.join(self.figures_dir, "price_elasticity_correlation.png")
