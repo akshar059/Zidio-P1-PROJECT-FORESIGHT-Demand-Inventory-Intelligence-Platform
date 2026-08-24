@@ -15,3 +15,7 @@ __pycache__/
 .idea/
 .vscode/
 *.swp
+
+# Reports & Binary Documents
+*.docx
+*.pdf
