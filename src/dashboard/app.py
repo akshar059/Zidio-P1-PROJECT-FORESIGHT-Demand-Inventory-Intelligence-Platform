@@ -123,10 +123,10 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
         backdrop-filter: blur(10px);
         transition: all 0.3s ease;
-        min-height: 120px;
+        min-height: 125px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
     }
     .metric-card:hover {
@@ -135,29 +135,39 @@ st.markdown("""
         box-shadow: 0 10px 25px rgba(0, 242, 254, 0.2);
     }
     .metric-label {
-        font-size: 0.75rem;
+        font-size: 0.73rem;
         font-weight: 600;
         color: #8b949e;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
+        letter-spacing: 0.3px;
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-break: normal;
+        line-height: 1.25;
+        min-height: 2.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
     }
     .metric-value {
         font-size: 1.35rem;
         font-weight: 800;
         color: #ffffff;
-        margin: 0.25rem 0;
+        margin: 0.2rem 0;
         white-space: nowrap;
         text-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
     }
     .metric-sub {
-        font-size: 0.75rem;
+        font-size: 0.73rem;
         font-weight: 500;
         color: #58a6ff;
-        white-space: nowrap;
+        white-space: normal;
+        overflow-wrap: break-word;
+        line-height: 1.2;
+        text-align: center;
+        width: 100%;
     }
     
     /* Executive Snapshot Glass Cards */
