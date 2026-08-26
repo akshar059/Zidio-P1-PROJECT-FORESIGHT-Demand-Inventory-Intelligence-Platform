@@ -69,7 +69,7 @@ class AnalyticsEngine:
         }
 
     def compute_growth_matrix(self, sales_df: pd.DataFrame) -> pd.DataFrame:
-        """Classifies products into 2x2 Growth Matrix (Growth vs Revenue)."""
+        """Classifies products into 2x2 Growth Matrix (Growth vs Revenue) using robust retail demand velocity."""
         sales_df = sales_df.copy()
         sales_df["date"] = pd.to_datetime(sales_df["date"])
         max_date = sales_df["date"].max()
@@ -80,11 +80,26 @@ class AnalyticsEngine:
         previous = sales_df[(sales_df["date"] > cutoff_prev) & (sales_df["date"] <= cutoff_recent)].groupby("item_id")["sum_total"].sum()
         
         matrix_df = pd.DataFrame({"recent_revenue": recent, "previous_revenue": previous}).fillna(0.0)
-        matrix_df["total_revenue"] = sales_df.groupby("item_id")["sum_total"].sum()
-        matrix_df["growth_pct"] = ((matrix_df["recent_revenue"] - matrix_df["previous_revenue"]) / (matrix_df["previous_revenue"] + 1.0)) * 100.0
+        matrix_df["total_revenue"] = sales_df.groupby("item_id")["sum_total"].sum().fillna(0.0)
         
-        rev_median = matrix_df["total_revenue"].median()
-        growth_median = matrix_df["growth_pct"].median()
+        # Calculate realistic growth percentage with proper baseline handling
+        def _calc_growth(row):
+            r = row["recent_revenue"]
+            p = row["previous_revenue"]
+            if p > 0 and r > 0:
+                return ((r - p) / p) * 100.0
+            elif p == 0 and r > 0:
+                return 100.0  # New product launch benchmark
+            elif p > 0 and r == 0:
+                return -100.0 # Delisted / Stockout
+            else:
+                return 0.0
+                
+        matrix_df["growth_pct"] = matrix_df.apply(_calc_growth, axis=1)
+        
+        rev_median = matrix_df[matrix_df["total_revenue"] > 0]["total_revenue"].median()
+        active_growth = matrix_df[(matrix_df["growth_pct"] > -100) & (matrix_df["growth_pct"] != 0)]["growth_pct"]
+        growth_median = active_growth.median() if not active_growth.empty else 0.0
         
         def classify(row):
             high_rev = row["total_revenue"] >= rev_median

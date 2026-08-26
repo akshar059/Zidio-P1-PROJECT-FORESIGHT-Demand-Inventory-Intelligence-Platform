@@ -326,10 +326,16 @@ def load_dashboard_data():
     if growth_df is None or growth_df.empty:
         items = [f"SKU_{i:03d}" for i in range(1, 51)]
         np.random.seed(42)
+        tot_revs = np.random.uniform(50000, 800000, len(items))
+        prev_revs = tot_revs * np.random.uniform(0.2, 0.4, len(items))
+        g_pcts = np.random.uniform(-15.0, 45.0, len(items))
+        rec_revs = prev_revs * (1 + g_pcts / 100.0)
         growth_df = pd.DataFrame({
             "item_id": items,
-            "total_revenue": np.random.uniform(50000, 800000, len(items)),
-            "growth_pct": np.random.uniform(-15.0, 45.0, len(items)),
+            "recent_revenue": rec_revs,
+            "previous_revenue": prev_revs,
+            "total_revenue": tot_revs,
+            "growth_pct": g_pcts,
             "matrix_category": np.random.choice(["Stars 🌟", "Cash Cows 🐄", "Opportunities 🚀", "Dogs 🐶"], len(items))
         })
 
@@ -981,13 +987,35 @@ if page == "🚀 1. Home Page — Foresight Command Center":
         st.dataframe(pareto_df.head(5)[["item_id", "sum_total"]].style.format({"sum_total": "${:,.2f}"}), use_container_width=True)
     with tb2:
         st.markdown("##### 📉 Bottom 5 Revenue SKUs")
-        st.dataframe(pareto_df.tail(5)[["item_id", "sum_total"]].style.format({"sum_total": "${:,.2f}"}), use_container_width=True)
+        active_pareto = pareto_df[pareto_df["sum_total"] >= 50.0]
+        bot_df = active_pareto.tail(5) if len(active_pareto) >= 5 else pareto_df.tail(5)
+        st.dataframe(bot_df[["item_id", "sum_total"]].style.format({"sum_total": "${:,.2f}"}), use_container_width=True)
     with tb3:
         st.markdown("##### 🚀 Fastest-Growing SKUs")
-        st.dataframe(growth_df.sort_values("growth_pct", ascending=False).head(5)[["item_id", "growth_pct"]].style.format({"growth_pct": "+{:.1f}%"}), use_container_width=True)
+        fast_df = pd.DataFrame()
+        if "previous_revenue" in growth_df.columns:
+            for thresh in [25000, 10000, 2500]:
+                candidates = growth_df[growth_df["previous_revenue"] >= thresh].sort_values("growth_pct", ascending=False)
+                if len(candidates) >= 5:
+                    fast_df = candidates.head(5)
+                    break
+        if fast_df.empty:
+            fast_df = growth_df.sort_values("growth_pct", ascending=False).head(5)
+        st.dataframe(fast_df[["item_id", "growth_pct"]].style.format({"growth_pct": "+{:.1f}%"}), use_container_width=True)
     with tb4:
         st.markdown("##### 🔻 Declining SKUs")
-        st.dataframe(growth_df.sort_values("growth_pct", ascending=True).head(5)[["item_id", "growth_pct"]].style.format({"growth_pct": "{:.1f}%"}), use_container_width=True)
+        dec_df = pd.DataFrame()
+        if "previous_revenue" in growth_df.columns and "recent_revenue" in growth_df.columns:
+            for thresh in [25000, 10000, 2500]:
+                candidates = growth_df[(growth_df["previous_revenue"] >= thresh) & (growth_df["recent_revenue"] >= 500)].sort_values("growth_pct", ascending=True)
+                if len(candidates) >= 5:
+                    dec_df = candidates.head(5)
+                    break
+        if dec_df.empty:
+            dec_df = growth_df[growth_df["growth_pct"] < 0].sort_values("growth_pct", ascending=True).head(5)
+        if dec_df.empty:
+            dec_df = growth_df.sort_values("growth_pct", ascending=True).head(5)
+        st.dataframe(dec_df[["item_id", "growth_pct"]].style.format({"growth_pct": "{:.1f}%"}), use_container_width=True)
 
     st.divider()
 
@@ -1177,10 +1205,12 @@ elif page == "📊 2. Sales Analytics — Deep Sales Intelligence":
         st.plotly_chart(fig_pie, use_container_width=True)
 
     st.markdown("### 🚀 2x2 Product Growth Matrix")
+    plot_growth = growth_df.sort_values("total_revenue", ascending=False).head(100).copy()
+    plot_growth["growth_pct_display"] = plot_growth["growth_pct"].clip(-100.0, 300.0)
     fig_scat = px.scatter(
-        growth_df.head(100), x="total_revenue", y="growth_pct", color="matrix_category",
-        hover_data=["item_id"], title="Product Growth Rate (%) vs Total Revenue ($)",
-        labels={"total_revenue": "Total Revenue ($)", "growth_pct": "Growth Rate (%)", "matrix_category": "Growth Category"}
+        plot_growth, x="total_revenue", y="growth_pct_display", color="matrix_category",
+        hover_data=["item_id", "growth_pct"], title="Product Growth Rate (%) vs Total Revenue ($) — Top 100 Revenue SKUs",
+        labels={"total_revenue": "Total Revenue ($)", "growth_pct_display": "Growth Rate (%)", "matrix_category": "Growth Category"}
     )
     fig_scat.update_layout(template="plotly_dark", height=420, xaxis_title="Total Product Revenue ($)", yaxis_title="Product Sales Growth Rate (%)")
     st.plotly_chart(fig_scat, use_container_width=True)

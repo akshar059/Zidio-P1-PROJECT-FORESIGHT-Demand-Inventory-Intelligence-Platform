@@ -19,3 +19,14 @@ __pycache__/
 # Reports & Binary Documents
 *.docx
 *.pdf
+*.doc
+*.pptx
+*.ppt
+
+# Machine Learning & Training Artifacts
+catboost_info/
+lightning_logs/
+wandb/
+
+# Large Datasets (Split parts used for repo storage)
+data/processed/feature_matrix.parquet
